@@ -1,0 +1,51 @@
+steps:
+  - name: "gcr.io/cloud-builders/git"
+    args: ["clone", "https://github.com/DominikDO98/Map-GameJS.git"]
+
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "-t",
+        "us-central1-docker.pkg.dev/$PROJECT_ID/my-docker-repo/map:latest",
+        "./map",
+      ]
+
+  - name: "gcr.io/cloud-builders/git"
+    args: ["clone", "https://github.com/DominikDO98/Score-GameJS.git"]
+
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "-t",
+        "us-central1-docker.pkg.dev/$PROJECT_ID/my-docker-repo/score:latest",
+        "./score",
+      ]
+
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "us-central1-docker.pkg.dev/$PROJECT_ID/my-docker-repo/map:latest",
+      ]
+
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "us-central1-docker.pkg.dev/$PROJECT_ID/my-docker-repo/score:latest",
+      ]
+
+  - name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud compute ssh my-vm-name \
+          --zone=us-central1-a \
+          --command="cd /docker && docker compose pull && docker compose up -d --remove-orphans"
+
+images:
+  - "us-central1-docker.pkg.dev/$PROJECT_ID/my-docker-repo/map:latest"
+  - "us-central1-docker.pkg.dev/$PROJECT_ID/my-docker-repo/score:latest"

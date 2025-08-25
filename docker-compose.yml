@@ -1,0 +1,37 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-alpine
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
+
+  mongodb:
+    image: mongo:6
+    container_name: mongodb
+    command: mongod --wiredTigerCacheSizeGB 0.25
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INIT_DATABASE: ${MONGO_INIT_DATABASE}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+
+  map:
+    image: us-central1-docker.pkg.dev/PROJECT_ID/game-repo/map:latest
+    depends_on: [rabbitmq]
+
+  score:
+    image: us-central1-docker.pkg.dev/PROJECT_ID/game-repo/score:latest
+    depends_on: [rabbitmq, mongodb]
+
+volumes:
+  mongo-data:
+
+networks:
+  backend:
