@@ -26,7 +26,7 @@ steps:
       [
         "build",
         "-t",
-        "us-central1-docker.pkg.dev/$PROJECT_ID/game-repo/map:latest",
+        "us-central1-docker.pkg.dev/$PROJECT_ID/game-js-docker/map:latest",
         "map",
       ]
 
@@ -35,16 +35,22 @@ steps:
       [
         "build",
         "-t",
-        "us-central1-docker.pkg.dev/$PROJECT_ID/game-repo/score:latest",
+        "us-central1-docker.pkg.dev/$PROJECT_ID/game-js-docker/score:latest",
         "score",
       ]
 
   - name: "gcr.io/cloud-builders/docker"
     args:
-      ["push", "us-central1-docker.pkg.dev/$PROJECT_ID/game-repo/map:latest"]
+      [
+        "push",
+        "us-central1-docker.pkg.dev/$PROJECT_ID/game-js-docker/map:latest",
+      ]
   - name: "gcr.io/cloud-builders/docker"
     args:
-      ["push", "us-central1-docker.pkg.dev/$PROJECT_ID/game-repo/score:latest"]
+      [
+        "push",
+        "us-central1-docker.pkg.dev/$PROJECT_ID/game-js-docker/score:latest",
+      ]
 
   - name: "gcr.io/cloud-builders/gcloud"
     args:
